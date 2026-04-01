@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Discover Cambodia — Kingdom of Wonder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --bg:       #fdf8f0;
+      --bg2:      #f5ede0;
+      --card:     #ffffff;
+      --text:     #1c1208;
+      --muted:    #7a6244;
+      --border:   #e8d9c4;
+      --nav-bg:   rgba(253,248,240,0.94);
+    }
+    .dark-wrap:has(#dm:checked) {
+      --bg:       #110e08;
+      --bg2:      #1a1408;
+      --card:     #1e1810;
+      --text:     #f5ece0;
+      --muted:    #a08a68;
+      --border:   #2e2518;
+      --nav-bg:   rgba(17,14,8,0.95);
+    }
+    #dm { display:none; }
+
+    * { font-family:'Outfit',sans-serif; box-sizing:border-box; }
+    .serif { font-family:'Cormorant Garamond',serif; }
+
+    body { background:var(--bg); color:var(--text); transition:background .3s,color .3s; margin:0; }
+
+    /* page routing */
+    #login { display:none; }
+    #home  { display:block; }
+    #login:target          { display:flex; min-height:100vh; }
+    #login:target ~ #home  { display:none; }
+
+    /* ---------- colours ---------- */
+    :root {
+      --gold: #c8872a;
+      --gold2:#e8a83c;
+      --red:  #9b2335;
+    }
+
+    /* nav */
+    .nav { background:var(--nav-bg); border-bottom:1px solid var(--border); backdrop-filter:blur(12px); }
+
+    /* cards */
+    .card { background:var(--card); border:1px solid var(--border); }
+
+    /* hero */
+    .hero-img  { object-fit:cover; width:100%; height:100%; position:absolute; inset:0; }
+    .hero-grad { background:linear-gradient(180deg,rgba(0,0,0,.25) 0%,rgba(0,0,0,.65) 100%); position:absolute; inset:0; }
+
+    /* destination cards */
+    .dest { position:relative; overflow:hidden; border-radius:1rem; }
+    .dest img { transition:transform .6s ease; width:100%; height:100%; object-fit:cover; display:block; }
+    .dest:hover img { transform:scale(1.08); }
+    .dest-overlay { background:linear-gradient(to top,rgba(0,0,0,.75) 40%,transparent 100%); position:absolute; inset:0; }
+
+    /* gold underline */
+    .gold-ul::after { content:''; display:block; width:44px; height:2px; background:var(--gold); margin-top:10px; }
+
+    /* feature icon ring */
+    .f-icon { width:50px; height:50px; border-radius:50%; border:1px solid var(--gold); display:flex; align-items:center; justify-content:center; color:var(--gold); flex-shrink:0; }
+
+    /* testimonial */
+    .tcard { background:var(--card); border:1px solid var(--border); border-radius:1rem; }
+
+    /* login */
+    .login-bg { background:linear-gradient(135deg,#0d0a06 0%,#1e1508 50%,#0a0d08 100%); flex:1; }
+    .glass    { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); backdrop-filter:blur(24px); }
+    .l-input  { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); color:#f5ece0; outline:none; transition:border .2s; width:100%; padding:.75rem 1rem; border-radius:.75rem; font-size:.875rem; }
+    .l-input:focus        { border-color:var(--gold); }
+    .l-input::placeholder { color:rgba(255,255,255,.3); }
+    .btn-gold { background:linear-gradient(135deg,#e8a83c,#9b6010); color:#fff; font-weight:600; letter-spacing:.04em; transition:opacity .2s; }
+    .btn-gold:hover { opacity:.88; }
+    .btn-out  { border:1px solid var(--border); color:var(--text); transition:border-color .2s, color .2s; }
+    .btn-out:hover { border-color:var(--gold); color:var(--gold); }
+
+    /* scroll reveal */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+    .fu  { animation:fadeUp .7s ease both; }
+    .d1  { animation-delay:.1s; } .d2 { animation-delay:.2s; } .d3 { animation-delay:.3s; }
+
+    /* Khmer motif border top */
+    .khmer-border { border-top:3px solid transparent; border-image:repeating-linear-gradient(90deg,var(--gold) 0,var(--gold) 6px,transparent 6px,transparent 10px) 1; }
+
+    /* muted text */
+    .tm { color:var(--muted); }
+    .tb { color:var(--border); }
+
+    html { scroll-behavior:smooth; }
+
+    /* red flag accent */
+    .kh-flag { display:inline-flex; align-items:center; gap:6px; }
+    .kh-flag span.stripe { width:4px; height:16px; border-radius:2px; }
+
+    /* newsletter */
+    .nl-input { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.2); color:#fff; outline:none; }
+    .nl-input::placeholder { color:rgba(255,255,255,.4); }
+    .nl-input:focus { border-color:#fff; }
+  </style>
+</head>
+<body class="dark-wrap">
+<input type="checkbox" id="dm"/>
+
+<!-- ═══════════════════ LOGIN PAGE ═══════════════════ -->
+<div id="login" class="login-bg items-center justify-center px-4 py-16 relative">
+  <!-- orbs -->
+  <div style="position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0">
+    <div style="position:absolute;top:-15%;left:-10%;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(200,135,42,.14) 0%,transparent 70%)"></div>
+    <div style="position:absolute;bottom:-15%;right:-10%;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(155,35,53,.12) 0%,transparent 70%)"></div>
+  </div>
+
+  <div class="glass rounded-3xl p-10 w-full max-w-md relative z-10 fu">
+    <!-- brand -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-2 mb-3">
+        <!-- Angkor lotus icon -->
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <path d="M16 4 C16 4 12 10 12 16 C12 22 16 28 16 28 C16 28 20 22 20 16 C20 10 16 4 16 4Z" fill="#c8872a" opacity=".9"/>
+          <path d="M4 16 C4 16 10 12 16 12 C22 12 28 16 28 16 C28 16 22 20 16 20 C10 20 4 16 4 16Z" fill="#c8872a" opacity=".7"/>
+          <circle cx="16" cy="16" r="3.5" fill="#e8a83c"/>
+        </svg>
+        <span class="serif text-2xl font-bold text-white tracking-wide">KhmerJourneys</span>
+      </div>
+      <p style="color:rgba(255,255,255,.45)" class="text-sm">Sign in to explore the Kingdom of Wonder</p>
+    </div>
+
+    <!-- social -->
+    <div class="flex gap-3 mb-5">
+      <button type="button" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm transition" style="border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.65)">
+        <svg width="17" height="17" viewBox="0 0 24 24"><path fill="#EA4335" d="M5.27 9.76A7.08 7.08 0 0 1 12 4.9c1.69 0 3.21.59 4.4 1.56l3.28-3.28A11.94 11.94 0 0 0 12 1C8.2 1 4.93 3.07 3.05 6.1l2.22 3.66z"/><path fill="#34A853" d="M16.04 18.01A7.06 7.06 0 0 1 12 19.1c-2.85 0-5.29-1.68-6.48-4.13l-2.27 3.7C5.14 21.08 8.32 23 12 23c2.98 0 5.7-1.03 7.8-2.72l-3.76-2.27z"/><path fill="#FBBC05" d="M19.8 20.28A11.94 11.94 0 0 0 23 13c0-.69-.07-1.36-.18-2H12v4.27h6.24a5.38 5.38 0 0 1-2.2 3.01l3.76 2.27-.01-.27z"/><path fill="#4285F4" d="M5.52 14.97A7.14 7.14 0 0 1 4.9 12c0-1.03.18-2.01.5-2.94L3.2 5.4A11.94 11.94 0 0 0 1 12c0 1.93.46 3.75 1.28 5.37l3.24-2.4z"/></svg>
+        Google
+      </button>
+      <button type="button" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm transition" style="border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.65)">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        Facebook
+      </button>
+    </div>
+
+    <div class="flex items-center gap-3 mb-5">
+      <div class="flex-1" style="height:1px;background:rgba(255,255,255,.1)"></div>
+      <span style="color:rgba(255,255,255,.3);font-size:.75rem">or continue with email</span>
+      <div class="flex-1" style="height:1px;background:rgba(255,255,255,.1)"></div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:.875rem;margin-bottom:1.25rem">
+      <div>
+        <label style="display:block;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:.4rem">Email Address</label>
+        <input type="email" placeholder="you@example.com" class="l-input"/>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:.4rem">
+          <label style="font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45)">Password</label>
+          <a href="#" style="font-size:.75rem;color:var(--gold2)">Forgot password?</a>
+        </div>
+        <input type="password" placeholder="••••••••" class="l-input"/>
+      </div>
+      <label style="display:flex;align-items:center;gap:.6rem;cursor:pointer">
+        <input type="checkbox" style="width:15px;height:15px;accent-color:var(--gold);border-radius:3px"/>
+        <span style="font-size:.8rem;color:rgba(255,255,255,.45)">Remember me for 30 days</span>
+      </label>
+    </div>
+
+    <a href="#home" class="btn-gold block text-center w-full py-3.5 rounded-xl text-sm tracking-widest uppercase mb-4">Sign In</a>
+    <p style="text-align:center;font-size:.8rem;color:rgba(255,255,255,.4)">
+      No account yet? <a href="#" style="color:var(--gold2);text-decoration:underline">Register free</a>
+    </p>
+  </div>
+
+  <a href="#home" style="position:absolute;top:1.5rem;left:1.5rem;display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:rgba(255,255,255,.45);z-index:20;text-decoration:none" onmouseover="this.style.color='rgba(255,255,255,.8)'" onmouseout="this.style.color='rgba(255,255,255,.45)'">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Back to site
+  </a>
+</div>
+
+
+<!-- ═══════════════════ HOME PAGE ═══════════════════ -->
+<div id="home">
+
+  <!-- ── NAVBAR ── -->
+  <nav class="nav sticky top-0 z-50">
+    <div style="max-width:1200px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:64px">
+      <!-- Logo -->
+      <a href="#home" style="display:flex;align-items:center;gap:8px;text-decoration:none">
+        <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+          <path d="M16 4 C16 4 12 10 12 16 C12 22 16 28 16 28 C16 28 20 22 20 16 C20 10 16 4 16 4Z" fill="#c8872a" opacity=".9"/>
+          <path d="M4 16 C4 16 10 12 16 12 C22 12 28 16 28 16 C28 16 22 20 16 20 C10 20 4 16 4 16Z" fill="#c8872a" opacity=".7"/>
+          <circle cx="16" cy="16" r="3.5" fill="#e8a83c"/>
+        </svg>
+        <span class="serif" style="font-size:1.15rem;font-weight:700;color:var(--text)">KhmerJourneys</span>
+      </a>
+
+      <!-- Links -->
+      <div style="display:none" class="md-links">
+        <a href="#destinations" class="tm" style="font-size:.875rem;font-weight:500;text-decoration:none;margin:0 .9rem;transition:color .2s">Destinations</a>
+        <a href="#experiences" class="tm" style="font-size:.875rem;font-weight:500;text-decoration:none;margin:0 .9rem;transition:color .2s">Experiences</a>
+        <a href="#about" class="tm" style="font-size:.875rem;font-weight:500;text-decoration:none;margin:0 .9rem;transition:color .2s">About</a>
+        <a href="#reviews" class="tm" style="font-size:.875rem;font-weight:500;text-decoration:none;margin:0 .9rem;transition:color .2s">Reviews</a>
+      </div>
+      <style>@media(min-width:768px){.md-links{display:flex!important}.md-links a:hover{color:var(--gold)!important}}</style>
+
+      <!-- Right -->
+      <div style="display:flex;align-items:center;gap:.75rem">
+        <!-- Dark toggle -->
+        <label for="dm" style="cursor:pointer;padding:.45rem;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;transition:border-color .2s" title="Toggle dark mode">
+          <!-- moon -->
+          <svg id="ico-moon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:var(--muted)"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <!-- sun -->
+          <svg id="ico-sun" width="17" height="17" fill="none" stroke="#c8872a" stroke-width="2" viewBox="0 0 24 24" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </label>
+        <style>
+          #dm:checked ~ * #ico-moon{display:none!important}
+          #dm:checked ~ * #ico-sun{display:block!important}
+        </style>
+
+        <a href="#login" class="tm" style="font-size:.875rem;text-decoration:none;display:none" class="md-signin">Sign In</a>
+        <style>@media(min-width:640px){.show-sm{display:inline!important}}</style>
+        <a href="#login" class="btn-gold show-sm" style="display:none;padding:.5rem 1.25rem;border-radius:999px;font-size:.8rem;text-decoration:none;letter-spacing:.05em">Plan Trip</a>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ── HERO ── -->
+  <section style="position:relative;height:100vh;min-height:580px;display:flex;align-items:center;justify-content:center;overflow:hidden">
+    <img class="hero-img" src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=1600&q=80" alt="Angkor Wat at sunrise"/>
+    <div class="hero-grad"></div>
+
+    <!-- Angkor silhouette decorative strip -->
+    <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,rgba(0,0,0,.6),transparent);z-index:1"></div>
+
+    <div style="position:relative;z-index:2;text-align:center;padding:0 1.5rem;max-width:860px;margin:0 auto">
+      <!-- Flag colours pill -->
+      <div style="display:inline-flex;align-items:center;gap:8px;padding:.4rem 1rem;border-radius:999px;background:rgba(155,35,53,.25);border:1px solid rgba(155,35,53,.4);margin-bottom:1.25rem">
+        <span style="width:5px;height:14px;background:#9b2335;border-radius:2px;display:inline-block"></span>
+        <span style="width:5px;height:20px;background:#1a5cb5;border-radius:2px;display:inline-block"></span>
+        <span style="width:5px;height:14px;background:#9b2335;border-radius:2px;display:inline-block"></span>
+        <span style="font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.8);font-weight:500">Kingdom of Wonder</span>
+      </div>
+
+      <h1 class="serif fu" style="color:#fff;font-size:clamp(2.8rem,7vw,5.5rem);font-weight:700;line-height:1.1;margin-bottom:1.25rem">
+        Discover<br/><em>Cambodia</em>
+      </h1>
+      <p class="fu d1" style="color:rgba(255,255,255,.72);font-size:1.05rem;max-width:520px;margin:0 auto 2.25rem;line-height:1.7">
+        Ancient temples, floating villages, jungle rivers, and the warmth of Khmer hospitality — all in one magnificent kingdom.
+      </p>
+
+      <!-- Search bar -->
+      <div class="fu d2" style="display:flex;flex-wrap:wrap;gap:.5rem;max-width:680px;margin:0 auto;background:rgba(255,255,255,.1);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.15);border-radius:1rem;padding:.5rem">
+        <div style="flex:1;min-width:150px;display:flex;align-items:center;gap:.6rem;padding:.6rem 1rem">
+          <svg width="15" height="15" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <input type="text" placeholder="Where in Cambodia?" style="background:transparent;border:none;outline:none;color:#fff;font-size:.85rem;width:100%" placeholder-color="rgba(255,255,255,.4)"/>
+        </div>
+        <div style="width:1px;background:rgba(255,255,255,.15);margin:.25rem 0"></div>
+        <div style="flex:1;min-width:130px;display:flex;align-items:center;gap:.6rem;padding:.6rem 1rem">
+          <svg width="15" height="15" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          <input type="text" placeholder="Travel dates" style="background:transparent;border:none;outline:none;color:#fff;font-size:.85rem;width:100%"/>
+        </div>
+        <button type="button" class="btn-gold" style="padding:.75rem 1.6rem;border-radius:.75rem;font-size:.85rem;border:none;cursor:pointer">Explore</button>
+      </div>
+      <style>input::placeholder{color:rgba(255,255,255,.4)}</style>
+
+      <!-- Stats -->
+      <div class="fu d3" style="display:flex;justify-content:center;gap:2.5rem;margin-top:2.5rem">
+        <div style="text-align:center">
+          <div class="serif" style="color:#fff;font-size:1.8rem;font-weight:700">25+</div>
+          <div style="color:rgba(255,255,255,.5);font-size:.72rem;margin-top:.2rem;letter-spacing:.05em">Destinations</div>
+        </div>
+        <div style="width:1px;background:rgba(255,255,255,.15)"></div>
+        <div style="text-align:center">
+          <div class="serif" style="color:#fff;font-size:1.8rem;font-weight:700">30K+</div>
+          <div style="color:rgba(255,255,255,.5);font-size:.72rem;margin-top:.2rem;letter-spacing:.05em">Happy Visitors</div>
+        </div>
+        <div style="width:1px;background:rgba(255,255,255,.15)"></div>
+        <div style="text-align:center">
+          <div class="serif" style="color:#fff;font-size:1.8rem;font-weight:700">4.9★</div>
+          <div style="color:rgba(255,255,255,.5);font-size:.72rem;margin-top:.2rem;letter-spacing:.05em">Avg Rating</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- scroll hint -->
+    <div style="position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;z-index:3">
+      <span style="color:rgba(255,255,255,.35);font-size:.65rem;letter-spacing:.2em">SCROLL</span>
+      <div style="width:1px;height:32px;background:linear-gradient(to bottom,rgba(255,255,255,.4),transparent)"></div>
+    </div>
+  </section>
+
+
+  <!-- ── DESTINATIONS ── -->
+  <section id="destinations" style="padding:5rem 1.5rem;max-width:1200px;margin:0 auto">
+    <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:1.5rem;margin-bottom:3rem">
+      <div>
+        <p style="font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem">Explore Cambodia</p>
+        <h2 class="serif gold-ul" style="font-size:clamp(2rem,4vw,3rem);font-weight:700;color:var(--text);margin:0">Must-Visit<br/>Destinations</h2>
+      </div>
+      <p class="tm" style="font-size:.875rem;line-height:1.75;max-width:320px">From the ancient wonder of Angkor Wat to the pristine shores of Koh Rong — Cambodia has a treasure for every soul.</p>
+    </div>
+
+    <!-- Grid -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:auto;gap:1rem">
+      <!-- Card 1 — tall (Angkor Wat) -->
+      <div class="dest" style="grid-row:span 2;min-height:420px">
+        <img src="https://images.unsplash.com/photo-1601628828688-632f38a5a7d0?w=700&q=80" alt="Angkor Wat" style="height:100%;min-height:420px"/>
+        <div class="dest-overlay"></div>
+        <div style="position:absolute;bottom:0;left:0;padding:1.5rem">
+          <span style="font-size:.65rem;color:rgba(255,255,255,.6);letter-spacing:.12em;text-transform:uppercase">Siem Reap Province</span>
+          <h3 class="serif" style="color:#fff;font-size:1.5rem;font-weight:700;margin:.2rem 0 .5rem">Angkor Wat</h3>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <span style="color:rgba(255,255,255,.7);font-size:.8rem">from <strong style="color:#fff">$89</strong>/day</span>
+            <span style="font-size:.65rem;padding:.25rem .7rem;border-radius:999px;background:rgba(200,135,42,.4);color:#f5d898;border:1px solid rgba(200,135,42,.4)">UNESCO ✦</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 — Phnom Penh -->
+      <div class="dest" style="min-height:200px">
+        <img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&q=80" alt="Phnom Penh" style="height:220px"/>
+        <div class="dest-overlay"></div>
+        <div style="position:absolute;bottom:0;left:0;padding:1.1rem">
+          <span style="font-size:.6rem;color:rgba(255,255,255,.55);letter-spacing:.1em;text-transform:uppercase">Capital City</span>
+          <h3 class="serif" style="color:#fff;font-size:1.15rem;font-weight:700;margin:.15rem 0 .3rem">Phnom Penh</h3>
+          <span style="color:rgba(255,255,255,.7);font-size:.78rem">from <strong style="color:#fff">$65</strong>/day</span>
+        </div>
+      </div>
+
+      <!-- Card 3 — Koh Rong -->
+      <div class="dest" style="min-height:200px">
+        <img src="https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=600&q=80" alt="Koh Rong" style="height:220px"/>
+        <div class="dest-overlay"></div>
+        <div style="position:absolute;bottom:0;left:0;padding:1.1rem">
+          <span style="font-size:.6rem;color:rgba(255,255,255,.55);letter-spacing:.1em;text-transform:uppercase">Koh Kong Province</span>
+          <h3 class="serif" style="color:#fff;font-size:1.15rem;font-weight:700;margin:.15rem 0 .3rem">Koh Rong Island</h3>
+          <span style="color:rgba(255,255,255,.7);font-size:.78rem">from <strong style="color:#fff">$110</strong>/day</span>
+        </div>
+      </div>
+
+      <!-- Card 4 — Battambang -->
+      <div class="dest" style="min-height:200px">
+        <img src="https://images.unsplash.com/photo-1513415756790-2ac1db1297d0?w=600&q=80" alt="Battambang" style="height:220px"/>
+        <div class="dest-overlay"></div>
+        <div style="position:absolute;bottom:0;left:0;padding:1.1rem">
+          <span style="font-size:.6rem;color:rgba(255,255,255,.55);letter-spacing:.1em;text-transform:uppercase">Battambang Province</span>
+          <h3 class="serif" style="color:#fff;font-size:1.15rem;font-weight:700;margin:.15rem 0 .3rem">Battambang</h3>
+          <span style="color:rgba(255,255,255,.7);font-size:.78rem">from <strong style="color:#fff">$55</strong>/day</span>
+        </div>
+      </div>
+
+      <!-- Card 5 — Sihanoukville -->
+      <div class="dest" style="min-height:200px">
+        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&q=80" alt="Beach" style="height:220px"/>
+        <div class="dest-overlay"></div>
+        <div style="position:absolute;bottom:0;left:0;padding:1.1rem">
+          <span style="font-size:.6rem;color:rgba(255,255,255,.55);letter-spacing:.1em;text-transform:uppercase">Preah Sihanouk</span>
+          <h3 class="serif" style="color:#fff;font-size:1.15rem;font-weight:700;margin:.15rem 0 .3rem">Sihanoukville</h3>
+          <span style="color:rgba(255,255,255,.7);font-size:.78rem">from <strong style="color:#fff">$75</strong>/day</span>
+        </div>
+      </div>
+    </div>
+    <style>
+      @media(max-width:767px){
+        #destinations .dest { grid-column:span 3!important; grid-row:span 1!important; }
+        #destinations > div:last-child { grid-template-columns:1fr!important; }
+      }
+    </style>
+
+    <div style="text-align:center;margin-top:2.5rem">
+      <a href="#" class="btn-out" style="display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 2rem;border-radius:999px;font-size:.875rem;text-decoration:none;font-weight:500">
+        View All Destinations
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+
+  <!-- ── EXPERIENCES ── -->
+  <section id="experiences" style="background:var(--bg2);padding:5rem 1.5rem">
+    <div style="max-width:1200px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:3.5rem">
+        <p style="font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem">Unique to Cambodia</p>
+        <h2 class="serif" style="font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;color:var(--text);margin:0">Authentic Experiences</h2>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem">
+        <!-- Exp 1 -->
+        <div class="card" style="border-radius:1.25rem;overflow:hidden;transition:border-color .2s;cursor:pointer" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="height:160px;overflow:hidden">
+            <img src="https://images.unsplash.com/photo-1588867702719-969c8ac736e1?w=500&q=80" alt="Temple" style="width:100%;height:100%;object-fit:cover;transition:transform .5s" onmouseover="this.style.transform='scale(1.07)'" onmouseout="this.style.transform='scale(1)'"/>
+          </div>
+          <div style="padding:1.25rem">
+            <div style="font-size:1.2rem;margin-bottom:.5rem">🛕</div>
+            <h3 class="serif" style="font-size:1.05rem;font-weight:700;color:var(--text);margin:0 0 .4rem">Temple Trekking</h3>
+            <p class="tm" style="font-size:.8rem;line-height:1.6;margin:0">Explore Angkor Thom, Ta Prohm, and Bayon with expert local guides at sunrise.</p>
+          </div>
+        </div>
+
+        <!-- Exp 2 -->
+        <div class="card" style="border-radius:1.25rem;overflow:hidden;transition:border-color .2s;cursor:pointer" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="height:160px;overflow:hidden">
+            <img src="https://images.unsplash.com/photo-1504474298956-a5d1bdebb543?w=500&q=80" alt="Tonle Sap" style="width:100%;height:100%;object-fit:cover;transition:transform .5s" onmouseover="this.style.transform='scale(1.07)'" onmouseout="this.style.transform='scale(1)'"/>
+          </div>
+          <div style="padding:1.25rem">
+            <div style="font-size:1.2rem;margin-bottom:.5rem">⛵</div>
+            <h3 class="serif" style="font-size:1.05rem;font-weight:700;color:var(--text);margin:0 0 .4rem">Tonle Sap Lake</h3>
+            <p class="tm" style="font-size:.8rem;line-height:1.6;margin:0">Cruise through the floating villages of Southeast Asia's largest freshwater lake.</p>
+          </div>
+        </div>
+
+        <!-- Exp 3 -->
+        <div class="card" style="border-radius:1.25rem;overflow:hidden;transition:border-color .2s;cursor:pointer" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="height:160px;overflow:hidden">
+            <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=500&q=80" alt="Khmer Food" style="width:100%;height:100%;object-fit:cover;transition:transform .5s" onmouseover="this.style.transform='scale(1.07)'" onmouseout="this.style.transform='scale(1)'"/>
+          </div>
+          <div style="padding:1.25rem">
+            <div style="font-size:1.2rem;margin-bottom:.5rem">🍜</div>
+            <h3 class="serif" style="font-size:1.05rem;font-weight:700;color:var(--text);margin:0 0 .4rem">Khmer Cuisine</h3>
+            <p class="tm" style="font-size:.8rem;line-height:1.6;margin:0">Street food tours and cooking classes featuring amok, lok lak, and nom banh chok.</p>
+          </div>
+        </div>
+
+        <!-- Exp 4 -->
+        <div class="card" style="border-radius:1.25rem;overflow:hidden;transition:border-color .2s;cursor:pointer" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div style="height:160px;overflow:hidden">
+            <img src="https://images.unsplash.com/photo-1575505586569-646b2ca898fc?w=500&q=80" alt="Jungle" style="width:100%;height:100%;object-fit:cover;transition:transform .5s" onmouseover="this.style.transform='scale(1.07)'" onmouseout="this.style.transform='scale(1)'"/>
+          </div>
+          <div style="padding:1.25rem">
+            <div style="font-size:1.2rem;margin-bottom:.5rem">🌿</div>
+            <h3 class="serif" style="font-size:1.05rem;font-weight:700;color:var(--text);margin:0 0 .4rem">Cardamom Jungle</h3>
+            <p class="tm" style="font-size:.8rem;line-height:1.6;margin:0">Eco-trekking through one of Asia's last pristine rainforests with wildlife spotting.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── TOURS ── -->
+  <section style="padding:5rem 1.5rem;max-width:1200px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:3.5rem">
+      <p style="font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem">Curated Packages</p>
+      <h2 class="serif" style="font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;color:var(--text);margin:0">Popular Cambodia Tours</h2>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem">
+
+      <!-- Tour 1 -->
+      <div class="card" style="border-radius:1.25rem;overflow:hidden;transition:border-color .2s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="position:relative;height:200px;overflow:hidden">
+          <img src="https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=600&q=80" alt="Angkor" style="width:100%;height:100%;object-fit:cover;transition:transform .5s" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'"/>
+          <span style="position:absolute;top:.9rem;left:.9rem;font-size:.65rem;padding:.25rem .7rem;border-radius:999px;background:linear-gradient(135deg,#e8a83c,#9b6010);color:#fff;font-weight:600">Best Seller</span>
+        </div>
+        <div style="padding:1.4rem">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem">
+            <h3 class="serif" style="font-size:1.1rem;font-weight:700;color:var(--text);margin:0">Angkor Sunrise Classic</h3>
+            <span class="tm" style="font-size:.75rem">7 days</span>
+          </div>
+          <p class="tm" style="font-size:.8rem;line-height:1.65;margin:0 0 .9rem">Witness Angkor Wat at first light, explore Bayon's stone faces, and discover Ta Prohm's jungle embrace.</p>
+          <div style="display:flex;align-items:center;gap:.3rem;margin-bottom:.9rem">
+            <span style="color:#e8a83c;font-size:.8rem">★★★★★</span>
+            <span class="tm" style="font-size:.72rem">(312 reviews)</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span class="tm" style="font-size:.75rem">From</span>
+            <span class="serif" style="font-size:1.3rem;font-weight:700;color:var(--gold)">$590</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tour 2 -->
+      <div class="card" style="border-radius:1.25rem;overflow:hidden;transition:border-color .2s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="position:relative;height:200px;overflow:hidden">
+          <img src="https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=600&q=80" alt="Island" style="width:100%;height:100%;object-fit:cover;transition:transform .5s" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'"/>
+          <span style="position:absolute;top:.9rem;left:.9rem;font-size:.65rem;padding:.25rem .7rem;border-radius:999px;background:rgba(20,100,80,.85);color:#5dffd0;font-weight:600">Eco Tour</span>
+        </div>
+        <div style="padding:1.4rem">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem">
+            <h3 class="serif" style="font-size:1.1rem;font-weight:700;color:var(--text);margin:0">Koh Rong Escape</h3>
+            <span class="tm" style="font-size:.75rem">5 days</span>
+          </div>
+          <p class="tm" style="font-size:.8rem;line-height:1.65;margin:0 0 .9rem">Bioluminescent beaches, snorkelling coral reefs, hammock bars, and barefoot island life.</p>
+          <div style="display:flex;align-items:center;gap:.3rem;margin-bottom:.9rem">
+            <span style="color:#e8a83c;font-size:.8rem">★★★★★</span>
+            <span class="tm" style="font-size:.72rem">(184 reviews)</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span class="tm" style="font-size:.75rem">From</span>
+            <span class="serif" style="font-size:1.3rem;font-weight:700;color:var(--gold)">$420</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tour 3 -->
+      <div class="card" style="border-radius:1.25rem;overflow:hidden;transition:border-color .2s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="position:relative;height:200px;overflow:hidden">
+          <img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&q=80" alt="Phnom Penh" style="width:100%;height:100%;object-fit:cover;transition:transform .5s" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'"/>
+          <span style="position:absolute;top:.9rem;left:.9rem;font-size:.65rem;padding:.25rem .7rem;border-radius:999px;background:rgba(155,35,53,.75);color:#ffc8c8;font-weight:600">Cultural</span>
+        </div>
+        <div style="padding:1.4rem">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem">
+            <h3 class="serif" style="font-size:1.1rem;font-weight:700;color:var(--text);margin:0">Phnom Penh Heritage</h3>
+            <span class="tm" style="font-size:.75rem">4 days</span>
+          </div>
+          <p class="tm" style="font-size:.8rem;line-height:1.65;margin:0 0 .9rem">Royal Palace, Silver Pagoda, riverfront night markets, and the vibrant Toul Tom Poung bazaar.</p>
+          <div style="display:flex;align-items:center;gap:.3rem;margin-bottom:.9rem">
+            <span style="color:#e8a83c;font-size:.8rem">★★★★☆</span>
+            <span class="tm" style="font-size:.72rem">(228 reviews)</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span class="tm" style="font-size:.75rem">From</span>
+            <span class="serif" style="font-size:1.3rem;font-weight:700;color:var(--gold)">$280</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ── ABOUT ── -->
+  <section id="about" style="background:var(--bg2);padding:5rem 1.5rem">
+    <div style="max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center">
+      <div style="position:relative">
+        <img src="https://images.unsplash.com/photo-1601628828688-632f38a5a7d0?w=700&q=80" alt="Angkor" style="border-radius:1.5rem;width:100%;height:420px;object-fit:cover"/>
+        <img src="https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&q=80" alt="Khmer" style="position:absolute;bottom:-1.5rem;right:-1.5rem;width:44%;height:200px;object-fit:cover;border-radius:1rem;border:4px solid var(--bg2)"/>
+        <div style="position:absolute;top:1.5rem;left:1.5rem;background:linear-gradient(135deg,#e8a83c,#9b6010);border-radius:50%;width:72px;height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">
+          <span class="serif" style="color:#fff;font-size:1.3rem;font-weight:700;line-height:1">10</span>
+          <span style="color:rgba(255,255,255,.8);font-size:.55rem;line-height:1.2">Yrs<br/>Exp</span>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem">Our Story</p>
+        <h2 class="serif gold-ul" style="font-size:clamp(1.8rem,3vw,2.6rem);font-weight:700;color:var(--text);margin:0 0 1.5rem">Cambodia-Born,<br/>Cambodia-Proud</h2>
+        <p class="tm" style="font-size:.875rem;line-height:1.8;margin-bottom:1rem">We are a team of passionate Cambodian travel specialists who grew up watching the sun rise over Angkor Wat. Since 2014, we've helped over 30,000 visitors discover the authentic heart of the Khmer kingdom.</p>
+        <p class="tm" style="font-size:.875rem;line-height:1.8;margin-bottom:2rem">Every itinerary is crafted with deep local knowledge — from secret temple trails to family-run guesthouses that never appear in guidebooks.</p>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:2rem">
+          <div style="text-align:center;padding:1rem;border:1px solid var(--border);border-radius:.875rem;background:var(--card)">
+            <div class="serif" style="font-size:1.5rem;font-weight:700;color:var(--gold)">25+</div>
+            <div class="tm" style="font-size:.7rem;margin-top:.2rem">Provinces</div>
+          </div>
+          <div style="text-align:center;padding:1rem;border:1px solid var(--border);border-radius:.875rem;background:var(--card)">
+            <div class="serif" style="font-size:1.5rem;font-weight:700;color:var(--gold)">30K+</div>
+            <div class="tm" style="font-size:.7rem;margin-top:.2rem">Travellers</div>
+          </div>
+          <div style="text-align:center;padding:1rem;border:1px solid var(--border);border-radius:.875rem;background:var(--card)">
+            <div class="serif" style="font-size:1.5rem;font-weight:700;color:var(--gold)">98%</div>
+            <div class="tm" style="font-size:.7rem;margin-top:.2rem">Satisfaction</div>
+          </div>
+        </div>
+
+        <a href="#login" class="btn-gold" style="display:inline-flex;align-items:center;gap:.5rem;padding:.85rem 2rem;border-radius:999px;font-size:.875rem;text-decoration:none">
+          Start Your Journey
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+    <style>@media(max-width:767px){#about > div > div{grid-template-columns:1fr!important;gap:2rem!important}}</style>
+  </section>
+
+
+  <!-- ── WHY CAMBODIA ── -->
+  <section style="padding:5rem 1.5rem;max-width:1200px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:3rem">
+      <p style="font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem">Why Travel Here</p>
+      <h2 class="serif" style="font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;color:var(--text);margin:0">Why Choose Cambodia</h2>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.25rem">
+      <div style="padding:1.75rem;border:1px solid var(--border);border-radius:1.25rem;background:var(--card);transition:border-color .2s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="f-icon" style="margin-bottom:1rem">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3 class="serif" style="font-size:1rem;font-weight:700;color:var(--text);margin:0 0 .5rem">Safe & Welcoming</h3>
+        <p class="tm" style="font-size:.8rem;line-height:1.65;margin:0">Khmer hospitality is legendary. Cambodia ranks among the safest destinations in Southeast Asia.</p>
+      </div>
+
+      <div style="padding:1.75rem;border:1px solid var(--border);border-radius:1.25rem;background:var(--card);transition:border-color .2s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="f-icon" style="margin-bottom:1rem">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <h3 class="serif" style="font-size:1rem;font-weight:700;color:var(--text);margin:0 0 .5rem">World Heritage Sites</h3>
+        <p class="tm" style="font-size:.8rem;line-height:1.65;margin:0">Home to Angkor Archaeological Park — one of humanity's greatest architectural achievements.</p>
+      </div>
+
+      <div style="padding:1.75rem;border:1px solid var(--border);border-radius:1.25rem;background:var(--card);transition:border-color .2s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="f-icon" style="margin-bottom:1rem">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <h3 class="serif" style="font-size:1rem;font-weight:700;color:var(--text);margin:0 0 .5rem">Budget-Friendly</h3>
+        <p class="tm" style="font-size:.8rem;line-height:1.65;margin:0">Incredible value — world-class experiences at a fraction of the cost of other destinations.</p>
+      </div>
+
+      <div style="padding:1.75rem;border:1px solid var(--border);border-radius:1.25rem;background:var(--card);transition:border-color .2s" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div class="f-icon" style="margin-bottom:1rem">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.84a16 16 0 0 0 6.29 6.29l.96-.96a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <h3 class="serif" style="font-size:1rem;font-weight:700;color:var(--text);margin:0 0 .5rem">24/7 Local Support</h3>
+        <p class="tm" style="font-size:.8rem;line-height:1.65;margin:0">Our Cambodian team is always reachable — in English and Khmer — throughout your trip.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── REVIEWS ── -->
+  <section id="reviews" style="background:var(--bg2);padding:5rem 1.5rem">
+    <div style="max-width:1200px;margin:0 auto">
+      <div style="text-align:center;margin-bottom:3rem">
+        <p style="font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem">Real Stories</p>
+        <h2 class="serif" style="font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;color:var(--text);margin:0">From Our Travellers</h2>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem">
+        <div class="tcard" style="padding:1.75rem">
+          <div style="color:#e8a83c;font-size:.85rem;margin-bottom:.9rem">★★★★★</div>
+          <p class="tm" style="font-size:.85rem;line-height:1.75;margin:0 0 1.25rem;font-style:italic">"Watching the sun rise over Angkor Wat was the most spiritual moment of my life. Our guide Sophal was extraordinary — his passion for Khmer history made every stone come alive."</p>
+          <div style="display:flex;align-items:center;gap:.75rem">
+            <img src="https://i.pravatar.cc/48?img=47" alt="Emma" style="width:40px;height:40px;border-radius:50%;object-fit:cover"/>
+            <div>
+              <div style="font-size:.875rem;font-weight:600;color:var(--text)">Emma Richardson</div>
+              <div class="tm" style="font-size:.72rem">Angkor Sunrise Tour · UK</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tcard" style="padding:1.75rem">
+          <div style="color:#e8a83c;font-size:.85rem;margin-bottom:.9rem">★★★★★</div>
+          <p class="tm" style="font-size:.85rem;line-height:1.75;margin:0 0 1.25rem;font-style:italic">"Koh Rong's bioluminescent beach at midnight is something I'll never forget. Swimming in glowing blue water is pure magic. KhmerJourneys handled every detail perfectly."</p>
+          <div style="display:flex;align-items:center;gap:.75rem">
+            <img src="https://i.pravatar.cc/48?img=15" alt="Marcus" style="width:40px;height:40px;border-radius:50%;object-fit:cover"/>
+            <div>
+              <div style="font-size:.875rem;font-weight:600;color:var(--text)">Marcus Yeo</div>
+              <div class="tm" style="font-size:.72rem">Koh Rong Escape · Singapore</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tcard" style="padding:1.75rem">
+          <div style="color:#e8a83c;font-size:.85rem;margin-bottom:.9rem">★★★★★</div>
+          <p class="tm" style="font-size:.85rem;line-height:1.75;margin:0 0 1.25rem;font-style:italic">"The Tonle Sap floating village tour was humbling and beautiful. The Cambodian people are the warmest I've met anywhere in the world. Already planning my return trip!"</p>
+          <div style="display:flex;align-items:center;gap:.75rem">
+            <img src="https://i.pravatar.cc/48?img=33" alt="Claire" style="width:40px;height:40px;border-radius:50%;object-fit:cover"/>
+            <div>
+              <div style="font-size:.875rem;font-weight:600;color:var(--text)">Claire Dubois</div>
+              <div class="tm" style="font-size:.72rem">Tonle Sap Cruise · France</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── NEWSLETTER ── -->
+  <section style="padding:4rem 1.5rem">
+    <div style="max-width:640px;margin:0 auto;text-align:center">
+      <div style="border-radius:2rem;padding:3.5rem 2rem;background:linear-gradient(135deg,#9b2335 0%,#6a1020 40%,#2a1a08 100%)">
+        <div style="font-size:1.6rem;margin-bottom:.75rem">🇰🇭</div>
+        <p style="font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:.6rem">Stay Inspired</p>
+        <h2 class="serif" style="color:#fff;font-size:1.8rem;font-weight:700;margin:0 0 .75rem">Discover Cambodia<br/>Every Week</h2>
+        <p style="color:rgba(255,255,255,.6);font-size:.85rem;margin-bottom:1.75rem">Hidden temples, travel tips, Khmer recipes, and exclusive offers — direct to your inbox.</p>
+        <div style="display:flex;gap:.5rem;max-width:380px;margin:0 auto">
+          <input type="email" placeholder="your@email.com" class="nl-input" style="flex:1;padding:.75rem 1rem;border-radius:.75rem;font-size:.875rem;border:1px solid rgba(255,255,255,.2);outline:none"/>
+          <button type="button" style="padding:.75rem 1.25rem;border-radius:.75rem;background:#fff;color:#7a4010;font-size:.8rem;font-weight:600;border:none;cursor:pointer;white-space:nowrap">Subscribe</button>
+        </div>
+        <p style="color:rgba(255,255,255,.35);font-size:.7rem;margin-top:.9rem">No spam — unsubscribe anytime.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── FOOTER ── -->
+  <footer class="khmer-border" style="background:var(--bg2);padding:4rem 1.5rem 2rem">
+    <div style="max-width:1200px;margin:0 auto">
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;margin-bottom:3rem">
+        <!-- Brand col -->
+        <div>
+          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+            <svg width="24" height="24" viewBox="0 0 32 32" fill="none"><path d="M16 4 C16 4 12 10 12 16 C12 22 16 28 16 28 C16 28 20 22 20 16 C20 10 16 4 16 4Z" fill="#c8872a" opacity=".9"/><path d="M4 16 C4 16 10 12 16 12 C22 12 28 16 28 16 C28 16 22 20 16 20 C10 20 4 16 4 16Z" fill="#c8872a" opacity=".7"/><circle cx="16" cy="16" r="3.5" fill="#e8a83c"/></svg>
+            <span class="serif" style="font-size:1.05rem;font-weight:700;color:var(--text)">KhmerJourneys</span>
+          </div>
+          <p class="tm" style="font-size:.8rem;line-height:1.75;margin-bottom:1.25rem;max-width:220px">Proudly Cambodian. Passionately local. Crafting unforgettable Khmer experiences since 2014.</p>
+          <!-- Social icons -->
+          <div style="display:flex;gap:.5rem">
+            <a href="#" style="width:32px;height:32px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;font-size:.75rem;transition:border-color .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+              <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="#" style="width:32px;height:32px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;transition:border-color .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+              <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>
+            </a>
+            <a href="#" style="width:32px;height:32px;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--muted);text-decoration:none;transition:border-color .2s" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+              <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Links -->
+        <div>
+          <h4 style="font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text);margin:0 0 1rem">Destinations</h4>
+          <div style="display:flex;flex-direction:column;gap:.6rem">
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Siem Reap</a>
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Phnom Penh</a>
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Koh Rong</a>
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Battambang</a>
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Kampot</a>
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Kratie</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 style="font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text);margin:0 0 1rem">Experiences</h4>
+          <div style="display:flex;flex-direction:column;gap:.6rem">
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Temple Trekking</a>
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">River Cruises</a>
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Cooking Classes</a>
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Eco Trekking</a>
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Beach Escapes</a>
+          </div>
+        </div>
+
+        <div>
+          <h4 style="font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text);margin:0 0 1rem">Support</h4>
+          <div style="display:flex;flex-direction:column;gap:.6rem">
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Help Centre</a>
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Travel Insurance</a>
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Visa Info</a>
+            <a href="#" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Privacy Policy</a>
+            <a href="#login" class="tm" style="font-size:.8rem;text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">Sign In</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:1.5rem;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.75rem">
+        <p class="tm" style="font-size:.75rem;margin:0">© 2025 KhmerJourneys. All rights reserved. Made with ❤️ in Phnom Penh, Cambodia.</p>
+        <p class="tm" style="font-size:.75rem;margin:0">🇰🇭 Proudly supporting local Cambodian communities</p>
+      </div>
+    </div>
+    <style>@media(max-width:767px){footer > div > div:first-of-type{grid-template-columns:1fr 1fr!important}}</style>
+  </footer>
+
+</div><!-- /home -->
+</body>
+</html>
